@@ -35,13 +35,13 @@ Run the following command to start the Zookeeper server with the provided config
 Run this command to start the Kafka server with the specified configuration:
 
 ```bash
-.\bin\windows\kafka-server-start.bat config\kafka.properties
+.\bin\windows\kafka-server-start.bat config\server.properties
 ```
 #### 4. Set Up the Python Environment
 
 Install the required Python libraries using pip. In your command prompt or terminal, run:
 ```bash
-pip install dash kafka-python pandas plotly
+pip install dash kafka-python pandas plotly pyspark
 ```
 These libraries are essential for building the dashboard and working with Kafka.
 

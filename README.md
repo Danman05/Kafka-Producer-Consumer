@@ -43,6 +43,14 @@ These libraries are essential for building the dashboard and working with Kafka.
 Usage
 To run the project, make sure both Zookeeper and Kafka servers are active, and that the Python environment is set up. Follow the documentation in the code files for additional details on running specific components of the project.
 
+Run producer and consumer python files
+```bash
+py .\consumer.py
+```
+```bash
+py .\producer.py
+```
+
 Additional Resources
 
 [Kafka Documentation](https://kafka.apache.org/documentation/).

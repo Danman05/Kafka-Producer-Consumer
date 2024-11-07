@@ -139,7 +139,6 @@ def update_circle(n):
     figure.update_layout(
         title_text="Percentage distribution of item production",
         annotations=[dict(text='Items', x=0.5, y=0.5, font_size=20, showarrow=False)],
-        margin=dict(l=20, r=20, t=20, b=20),
     )
     return figure
 
@@ -169,7 +168,6 @@ def update_graph(n):
     figure.update_layout(title='Batch Production',
                         xaxis_title='Time',
                         yaxis_title='Amount',
-                            margin=dict(l=20, r=20, t=20, b=20),
                         )
     return figure
 
@@ -190,7 +188,6 @@ def single_bar_graph(item, item_name, bar_color, y_range = [0,200]):
                 title=item_name,
                 yaxis=dict(range=y_range),
                 xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
-                margin=dict(l=20, r=20, t=20, b=20),
         )
     return figure
 

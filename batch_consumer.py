@@ -27,4 +27,4 @@ def show_batch(pd_df):
     df = spark.createDataFrame(dataframe)
     #df.printSchema() # printSchema works
 
-    # df.show() # Show not working, other spark operation also does not work
+    #df.show() # Show not working, other spark operation also does not work

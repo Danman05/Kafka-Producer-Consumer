@@ -2,19 +2,19 @@
 big_container = {
     'width': '100%',
     'display': 'inline-block',
-    'vertical-align': 'top'
+    'verticalAlign': 'top'
 }
 
 medium_container = {
     'width': '70%',
     'display': 'inline-block',
-    'vertical-align': 'top'
+    'verticalAlign': 'top'
 }
 
 small_container = {
     'width': '40%',
     'display': 'inline-block',
-    'vertical-align': 'top'
+    'verticalAlign': 'top'
 }
 
 flex = {
@@ -28,4 +28,7 @@ small_graph = {
 big_graph = {
     'height': 'auto',
     'width': '100%'
+}
+padding = {
+    'padding': '10px'
 }

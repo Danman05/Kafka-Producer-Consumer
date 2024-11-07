@@ -2,6 +2,7 @@ from kafka import KafkaConsumer
 import dash
 from dash import dcc, html
 from dash.dependencies import Input, Output
+import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.graph_objs as go
 import threading
@@ -13,7 +14,7 @@ import batch_consumer
 import dash_styling # Custom CSS
 
 #region dash initilization
-app = dash.Dash(__name__, assets_folder='assets')
+app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP])
 
 
 # The layout is based of multiple html.Div containers, dcc.Graph components, and a dcc.Interval component. 
@@ -26,26 +27,54 @@ app.layout = html.Div([
         interval=2*1000,
         n_intervals=0,
     ),
-    html.Div([
-        dcc.Graph(id='live-update-graph'),
-    ], style=dash_styling.medium_container),
-
-    html.Div([
-        html.Div([
-        dcc.Graph(id='small-chart-1', style=dash_styling.small_graph),
-        dcc.Graph(id='small-chart-2', style=dash_styling.small_graph),
-        ], style=dash_styling.flex),
-
-        html.Div([
-        dcc.Graph(id='small-chart-3', style=dash_styling.small_graph),
-        dcc.Graph(id='small-chart-4', style=dash_styling.small_graph),
-        ], style=dash_styling.flex),
-
-    ], style=dash_styling.small_container),
-    html.Div([
-        dcc.Graph(id='circle-production'),
-    ], style=dash_styling.big_container),
+    dbc.Container(
+        fluid=True,
+        children=[
+            dbc.Row(
+                [
+                    dbc.Col(
+                        dcc.Graph(id='live-update-graph'),
+                        width=6,  # Take up half the screen width for each big graph
+                        style=dash_styling.padding
+                    ),
+                    dbc.Col(
+                        dcc.Graph(id='circle-production'),
+                        width=6,
+                        style=dash_styling.padding
+                    ),
+                ],
+                className="g-0"  # No gap between columns
+            ),
+            dbc.Row(
+                [
+                    dbc.Col(
+                        dcc.Graph(id='small-chart-1'),
+                        width=3,  # Take up 1/4 of the screen width for each small graph
+                        style=dash_styling.padding
+                    ),
+                    dbc.Col(
+                        dcc.Graph(id='small-chart-2'),
+                        width=3,
+                        style=dash_styling.padding
+                    ),
+                    dbc.Col(
+                        dcc.Graph(id='small-chart-3'),
+                        width=3,
+                        style=dash_styling.padding
+                    ),
+                    dbc.Col(
+                        dcc.Graph(id='small-chart-4'),
+                        width=3,
+                        style=dash_styling.padding
+                    ),
+                ],
+                className="g-0"  # No gap between columns
+            )
+        ],
+        style={'padding': '20px'}  # Padding around the entire dashboard
+    )
 ])
+
 #endregion
 
 # Global variable to hold the data
@@ -56,18 +85,19 @@ data_lock = threading.Lock() # lock to keep the application thread safe
 # region Kafka producer 
 def connect_consumer(topic, group_id, bootstrap_servers, offset_type):
     return KafkaConsumer(
-        topic,  # Replace with your Kafka topic
-        bootstrap_servers=bootstrap_servers,  # Replace with your Kafka broker address
+        topic,
+        bootstrap_servers=bootstrap_servers,
         group_id=group_id,
-        value_deserializer=lambda m: json.loads(m.decode('utf-8')),  # Deserialize messages from JSON
-        auto_offset_reset=offset_type,  # Start reading at the latest message
+        value_deserializer=lambda m: json.loads(m.decode('ascii')),  # Deserialize messages from JSON
+        auto_offset_reset=offset_type,
+        enable_auto_commit=False
     )
 
 def process_batch(consumer, batch_size = 5):
     global data
-    # Get the partition information
     for i in range(3): 
         try:
+            batch_cons = batch_consumer
             batch = []
             for message in consumer:
                 with data_lock:
@@ -76,7 +106,7 @@ def process_batch(consumer, batch_size = 5):
                     if len(batch) >= batch_size:
                         # TODO Send batches of data to PySpark
                         # PySpark tasks, what can we compare the batches with.
-                        threading.Thread(target=batch_consumer.show_batch, kwargs={'pd_df': batch.copy()}).start()
+                        threading.Thread(target=batch_cons.show_batch, kwargs={'pd_df': batch.copy()}).start()
                         batch = []
                 time.sleep(0.1) 
 
@@ -109,6 +139,7 @@ def update_circle(n):
     figure.update_layout(
         title_text="Percentage distribution of item production",
         annotations=[dict(text='Items', x=0.5, y=0.5, font_size=20, showarrow=False)],
+        margin=dict(l=20, r=20, t=20, b=20),
     )
     return figure
 
@@ -137,7 +168,9 @@ def update_graph(n):
 
     figure.update_layout(title='Batch Production',
                         xaxis_title='Time',
-                        yaxis_title='Amount')
+                        yaxis_title='Amount',
+                            margin=dict(l=20, r=20, t=20, b=20),
+                        )
     return figure
 
 def single_bar_graph(item, item_name, bar_color, y_range = [0,200]):
@@ -157,6 +190,7 @@ def single_bar_graph(item, item_name, bar_color, y_range = [0,200]):
                 title=item_name,
                 yaxis=dict(range=y_range),
                 xaxis=dict(showgrid=False, zeroline=False, showticklabels=False),
+                margin=dict(l=20, r=20, t=20, b=20),
         )
     return figure
 
@@ -189,7 +223,7 @@ def update_gear_single(n):
 try:
     consumer = connect_consumer(
         topic='factorio-data-v2',
-        group_id='data-v2',
+        group_id='some-group',
         offset_type='latest',
         bootstrap_servers=['localhost:9092'])
     

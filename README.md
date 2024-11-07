@@ -61,3 +61,5 @@ Additional Resources
 [Kafka Documentation](https://kafka.apache.org/documentation/).
 
 [Dash & Plotly Documentation](https://dash.plotly.com/).
+
+[Spark & PySpark Documentation](https://spark.apache.org/docs/latest/api/python/index.html).

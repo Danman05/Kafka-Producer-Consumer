@@ -104,7 +104,7 @@ def update_circle(n):
     filtered_data = {key: value for key, value in latest_entry.items() if key != 'tick'}
     labels = list(filtered_data.keys())
     values = list(filtered_data.values())
-    figure.add_trace(go.Pie(labels=['Iron Plate', 'Copper Plate', 'Gear Wheel', 'Electronic Circuit'], values=values, hole=0.3))
+    figure.add_trace(go.Pie(labels=labels, values=values, hole=0.3,))
     # Update layout for better presentation
     figure.update_layout(
         title_text="Percentage distribution of item production",
